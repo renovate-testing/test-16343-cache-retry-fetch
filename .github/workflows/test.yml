@@ -1,0 +1,21 @@
+name: Print the last version of Alchemist
+
+on:
+  worflow_dispatch:
+  
+steps:
+  test-alchemist-deployment:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Compute the version of Alchemist
+        id: alchemist
+        shell: bash
+        run: |
+          # Idea: the regex matcher of Renovate keeps this string up to date automatically
+          # The version is extracted and used to access the correct version of the target repo
+          USES=$(cat <<TRICK_RENOVATE
+          - uses: alchemistsimulator/alchemist@21.0.8
+          TRICK_RENOVATE
+          )
+          echo "Computed version: \"${USES#*@}\""
